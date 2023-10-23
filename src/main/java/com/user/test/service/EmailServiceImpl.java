@@ -1,6 +1,7 @@
 package com.user.test.service;
 
 import com.user.test.entity.EmailDetails;
+import com.user.test.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -17,6 +18,9 @@ import java.io.File;
 public class EmailServiceImpl implements EmailService{
     @Autowired
     private JavaMailSender javaMailSender;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Value("${spring.mail.username}")
     private String sender;
@@ -36,7 +40,7 @@ public class EmailServiceImpl implements EmailService{
             // Setting up necessary details
             mailMessage.setFrom(sender);
             mailMessage.setTo(details.getRecipient());
-            mailMessage.setText(details.getMsgBody());
+            mailMessage.setText(details.getMsgBody()+"\nhttps:\\localhost:8090/sendMailWithAttachment?id="+jwtUtil.generateToken());
             mailMessage.setSubject(details.getSubject());
 
             // Sending the mail
